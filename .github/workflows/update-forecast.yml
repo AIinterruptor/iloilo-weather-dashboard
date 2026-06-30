@@ -1,0 +1,33 @@
+name: Update Weather Forecast
+
+on:
+  schedule:
+    # 22:00 UTC = 06:00 PHT daily
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch forecast
+        run: python fetch_forecast.py
+
+      - name: Commit updated forecast
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add forecast.json
+          git diff --cached --quiet || git commit -m "chore: update forecast $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
