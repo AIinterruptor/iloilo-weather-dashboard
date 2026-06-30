@@ -1,5 +1,97 @@
 {
-  "generated": "",
+  "generated": "2026-06-30 17:02 PHT",
   "location": "Savannah Crest A, Abilay Norte, Oton, Iloilo",
-  "days": []
+  "days": [
+    {
+      "date": "2026-07-05",
+      "condition": "Thunderstorm",
+      "icon": "\u26c8\ufe0f",
+      "temp_max": 32.4,
+      "temp_min": 22.7,
+      "rain_chance": 96,
+      "humidity_max": 97,
+      "wind_speed": 7.4,
+      "wind_dir": "NNE",
+      "uv_index": 8.1,
+      "uv_label": "Very High"
+    },
+    {
+      "date": "2026-07-06",
+      "condition": "Thunderstorm",
+      "icon": "\u26c8\ufe0f",
+      "temp_max": 27.5,
+      "temp_min": 23.4,
+      "rain_chance": 99,
+      "humidity_max": 100,
+      "wind_speed": 10.3,
+      "wind_dir": "S",
+      "uv_index": 7.55,
+      "uv_label": "High"
+    },
+    {
+      "date": "2026-07-07",
+      "condition": "Thunderstorm",
+      "icon": "\u26c8\ufe0f",
+      "temp_max": 27.9,
+      "temp_min": 23.7,
+      "rain_chance": 100,
+      "humidity_max": 97,
+      "wind_speed": 9.6,
+      "wind_dir": "NNE",
+      "uv_index": 8.6,
+      "uv_label": "Very High"
+    },
+    {
+      "date": "2026-07-08",
+      "condition": "Thunderstorm",
+      "icon": "\u26c8\ufe0f",
+      "temp_max": 29.8,
+      "temp_min": 24.2,
+      "rain_chance": 95,
+      "humidity_max": 95,
+      "wind_speed": 16.3,
+      "wind_dir": "SSW",
+      "uv_index": 7.4,
+      "uv_label": "High"
+    },
+    {
+      "date": "2026-07-09",
+      "condition": "Heavy Showers",
+      "icon": "\ud83c\udf27\ufe0f",
+      "temp_max": 27.6,
+      "temp_min": 24.8,
+      "rain_chance": 94,
+      "humidity_max": 96,
+      "wind_speed": 25.6,
+      "wind_dir": "SSW",
+      "uv_index": 7.45,
+      "uv_label": "High"
+    },
+    {
+      "date": "2026-07-10",
+      "condition": "Heavy Showers",
+      "icon": "\ud83c\udf27\ufe0f",
+      "temp_max": 25.1,
+      "temp_min": 24.5,
+      "rain_chance": 95,
+      "humidity_max": 97,
+      "wind_speed": 28.9,
+      "wind_dir": "SSW",
+      "uv_index": 7.1,
+      "uv_label": "High"
+    },
+    {
+      "date": "2026-07-11",
+      "condition": "Heavy Drizzle",
+      "icon": "\ud83c\udf27\ufe0f",
+      "temp_max": 27.2,
+      "temp_min": 24.4,
+      "rain_chance": 93,
+      "humidity_max": 96,
+      "wind_speed": 27.2,
+      "wind_dir": "SSW",
+      "uv_index": 5.7,
+      "uv_label": "Moderate"
+    }
+  ]
 }
