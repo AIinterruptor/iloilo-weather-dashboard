@@ -56,6 +56,17 @@
       48.5%     { opacity: 0; }
     }
 
+    /* ── Full-screen rain canvas ── */
+    #rain-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    #rain-canvas.visible { opacity: 1; }
+
     /* ── Layout ── */
     header, .grid, footer { position: relative; z-index: 1; }
 
@@ -361,6 +372,7 @@
       }
       .rain-layer    { opacity: var(--rain-opacity, 0.22) !important; }
       body::after    { opacity: 0 !important; }
+      #rain-canvas   { display: none !important; }
       .icon-glyph    { transform: none !important; }
       .card-icon::after { opacity: 0 !important; }
       .wind-arrow    { transform: rotate(var(--wind-deg, 45deg)) !important; opacity: 1 !important; }
@@ -368,6 +380,8 @@
   </style>
 </head>
 <body>
+
+<canvas id="rain-canvas" aria-hidden="true"></canvas>
 
 <header>
   <h1>🌧️ Iloilo Weather Forecast</h1>
@@ -385,6 +399,76 @@
 </footer>
 
 <script>
+/* ── Full-screen rain engine ── */
+(function() {
+  const canvas = document.getElementById('rain-canvas');
+  const ctx = canvas.getContext('2d');
+  let drops = [];
+  let animId = null;
+  let running = false;
+
+  const ANGLE = 105 * Math.PI / 180;   // habagat slant
+  const DX = Math.cos(ANGLE);
+  const DY = Math.sin(ANGLE);
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function makeDrop(intensity) {
+    const speed  = 8 + intensity * 12 + Math.random() * 6;   // 8–26 px/frame
+    const len    = 14 + intensity * 20 + Math.random() * 10; // 14–44 px
+    const alpha  = 0.15 + intensity * 0.35 + Math.random() * 0.15;
+    return {
+      x: Math.random() * (canvas.width + 200) - 100,
+      y: Math.random() * canvas.height,
+      speed, len, alpha,
+    };
+  }
+
+  function spawnDrops(intensity) {
+    // 60 drops at 0% intensity → 260 at 100%
+    const count = Math.round(60 + intensity * 200);
+    drops = Array.from({ length: count }, () => makeDrop(intensity));
+  }
+
+  function tick(intensity) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drops.forEach(d => {
+      d.x += DX * d.speed;
+      d.y += DY * d.speed;
+      // wrap: if drop exits bottom or right, re-enter from top/left edge
+      if (d.y > canvas.height + 50) { d.y = -d.len; d.x = Math.random() * canvas.width; }
+      if (d.x > canvas.width  + 50) { d.x = -d.len; d.y = Math.random() * canvas.height; }
+
+      ctx.save();
+      ctx.strokeStyle = `rgba(186,212,255,${d.alpha})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(d.x, d.y);
+      ctx.lineTo(d.x + DX * d.len, d.y + DY * d.len);
+      ctx.stroke();
+      ctx.restore();
+    });
+    animId = requestAnimationFrame(() => tick(intensity));
+  }
+
+  // Called from forecast fetch with average rain_chance (0–100)
+  window.startRain = function(avgRainChance) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (avgRainChance < 10) return; // not rainy, skip
+    const intensity = Math.max(0, Math.min(1, (avgRainChance - 10) / 90));
+    if (running) { cancelAnimationFrame(animId); }
+    spawnDrops(intensity);
+    running = true;
+    tick(intensity);
+    canvas.classList.add('visible');
+  };
+})();
+
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
 const DIRS = {
@@ -414,6 +498,12 @@ fetch('forecast.json?_=' + Date.now())
     document.getElementById('location').textContent = data.location || '';
     document.getElementById('updated').textContent = data.generated
       ? `Last updated: ${data.generated}` : '';
+
+    // Start full-screen rain if forecast is rainy
+    if (data.days && data.days.length) {
+      const avgRain = data.days.reduce((s, d) => s + (d.rain_chance || 0), 0) / data.days.length;
+      window.startRain(avgRain);
+    }
 
     const grid = document.getElementById('grid');
 
