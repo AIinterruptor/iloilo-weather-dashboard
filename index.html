@@ -12,12 +12,12 @@
       background: #0f172a;
       color: #e2e8f0;
       min-height: 100vh;
-      padding: 24px 16px;
+      padding: 24px 16px 48px;
       position: relative;
       overflow-x: hidden;
     }
 
-    /* ── Ambient background layers ── */
+    /* ── Background sky layers ── */
     body::before {
       content: "";
       position: fixed;
@@ -28,7 +28,6 @@
         linear-gradient(180deg, #111c30 0%, #0f172a 60%, #0b1120 100%);
       animation: sky-drift 26s ease-in-out infinite alternate;
     }
-
     body::after {
       content: "";
       position: fixed;
@@ -37,345 +36,262 @@
       pointer-events: none;
       background: radial-gradient(70% 55% at 50% 12%, rgba(186,205,255,0.10), transparent 65%);
       opacity: 0;
-      animation: lightning-flash 9s steps(1, end) infinite;
+      animation: lightning-flash 9s steps(1,end) infinite;
     }
-
     @keyframes sky-drift {
-      from { transform: translateY(0)   scale(1.00); filter: brightness(1.00); }
+      from { transform: translateY(0) scale(1.00); filter: brightness(1.00); }
       to   { transform: translateY(-2%) scale(1.04); filter: brightness(1.08); }
     }
-
     @keyframes lightning-flash {
-      0%, 100%  { opacity: 0; }
-      3%        { opacity: 0.9; }
-      4%        { opacity: 0.15; }
-      5%        { opacity: 0.75; }
-      6%        { opacity: 0; }
-      46%       { opacity: 0; }
-      47%       { opacity: 0.65; }
-      48.5%     { opacity: 0; }
+      0%,100% { opacity:0; } 3% { opacity:.9; } 4% { opacity:.15; }
+      5% { opacity:.75; } 6% { opacity:0; }
+      46% { opacity:0; } 47% { opacity:.65; } 48.5% { opacity:0; }
     }
 
-    /* ── Full-screen rain canvas ── */
+    /* ── Rain canvas ── */
     #rain-canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0;
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none; opacity: 0;
       transition: opacity 1.2s ease;
     }
     #rain-canvas.visible { opacity: 1; }
 
     /* ── Layout ── */
-    header, .grid, footer { position: relative; z-index: 1; }
+    header, .cards-wrap, footer { position: relative; z-index: 1; }
 
     header {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
-
     header h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #f8fafc;
-      letter-spacing: 0.01em;
-      opacity: 0;
-      animation: title-in 700ms cubic-bezier(0.22,1,0.36,1) 120ms forwards;
+      font-size: 1.6rem; font-weight: 700; color: #f8fafc;
+      opacity: 0; animation: title-in 700ms cubic-bezier(.22,1,.36,1) 120ms forwards;
     }
-
     header p.location {
-      font-size: 0.95rem;
-      color: #94a3b8;
-      margin-top: 4px;
-      opacity: 0;
-      animation: title-in 700ms ease 260ms forwards;
+      font-size: .95rem; color: #94a3b8; margin-top: 4px;
+      opacity: 0; animation: title-in 700ms ease 260ms forwards;
     }
-
     header p.updated {
-      font-size: 0.8rem;
-      color: #475569;
-      margin-top: 6px;
-      opacity: 0;
-      animation: title-in 700ms ease 360ms forwards;
+      font-size: .8rem; color: #475569; margin-top: 6px;
+      opacity: 0; animation: title-in 700ms ease 360ms forwards;
     }
-
     .season-badge {
-      display: inline-block;
-      background: #1e3a5f;
-      color: #60a5fa;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 99px;
-      margin-top: 8px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      opacity: 0;
-      animation:
-        title-in 600ms ease 480ms forwards,
-        badge-breathe 3.6s ease-in-out 1100ms infinite;
+      display: inline-block; background: #1e3a5f; color: #60a5fa;
+      font-size: .75rem; font-weight: 600; padding: 3px 10px;
+      border-radius: 99px; margin-top: 8px; letter-spacing: .05em;
+      text-transform: uppercase; opacity: 0;
+      animation: title-in 600ms ease 480ms forwards, badge-breathe 3.6s ease-in-out 1100ms infinite;
     }
-
     @keyframes title-in {
-      from { opacity: 0; transform: translateY(-12px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from { opacity:0; transform:translateY(-12px); }
+      to   { opacity:1; transform:translateY(0); }
     }
-
     @keyframes badge-breathe {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(96,165,250,0.0); }
-      50%      { box-shadow: 0 0 14px 1px rgba(96,165,250,0.35); }
+      0%,100% { box-shadow:0 0 0 0 rgba(96,165,250,0); }
+      50%     { box-shadow:0 0 14px 1px rgba(96,165,250,.35); }
     }
 
-    /* ── Grid ── */
-    .grid {
+    /* ── Cards grid ── */
+    .cards-wrap {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 16px;
-      max-width: 1400px;
+      max-width: 1600px;
       margin: 0 auto;
     }
 
-    /* ── Cards ── */
+    /* ── Card shell ── */
     .card {
-      border-radius: 16px;
-      padding: 20px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      border: 1px solid rgba(255,255,255,0.06);
-      position: relative;
-      overflow: hidden;
+      border-radius: 18px;
+      padding: 18px 16px 16px;
+      display: flex; flex-direction: column; gap: 0;
+      border: 1px solid rgba(255,255,255,.07);
+      position: relative; overflow: hidden;
       opacity: 0;
-      animation: card-in 560ms cubic-bezier(0.22,1,0.36,1) forwards;
+      animation: card-in 560ms cubic-bezier(.22,1,.36,1) forwards;
       animation-delay: calc(var(--i) * 80ms);
-      transition:
-        transform 0.28s cubic-bezier(0.22,1,0.36,1),
-        box-shadow 0.28s ease,
-        border-color 0.28s ease;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      transition: transform .28s cubic-bezier(.22,1,.36,1), box-shadow .28s ease, border-color .28s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,.3);
+      cursor: default;
     }
-
     @keyframes card-in {
-      from { opacity: 0; transform: translateY(18px) scale(0.97); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
+      from { opacity:0; transform:translateY(18px) scale(.97); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
     }
-
     .card:hover {
-      transform: translateY(-6px) scale(1.025);
-      border-color: rgba(125,211,252,0.35);
-      box-shadow:
-        0 18px 36px -12px rgba(0,0,0,0.55),
-        0 0 24px -6px rgba(56,189,248,0.25);
+      transform: translateY(-5px) scale(1.02);
+      border-color: rgba(125,211,252,.3);
+      box-shadow: 0 16px 32px -10px rgba(0,0,0,.5), 0 0 20px -6px rgba(56,189,248,.2);
     }
+    .card:hover .rain-layer { opacity: calc(var(--rain-opacity, .22) + .12); }
+    .card:hover .temp-max   { text-shadow: 0 0 14px rgba(251,191,36,.5); }
 
-    .card:hover .rain-layer { opacity: calc(var(--rain-opacity, 0.25) + 0.12); }
-    .card:hover .icon-glyph { animation-duration: 3.2s, 5s; }
-    .card:hover .temp-max {
-      transition: text-shadow 0.28s ease;
-      text-shadow: 0 0 14px rgba(251,191,36,0.5);
-    }
+    /* card bg by rain level */
+    .rain-none   { background: linear-gradient(145deg,#1e3a5f,rgba(30,64,175,.13)); }
+    .rain-low    { background: linear-gradient(145deg,#14532d,#166534); }
+    .rain-medium { background: linear-gradient(145deg,#713f12,#78350f); }
+    .rain-high   { background: linear-gradient(145deg,#7f1d1d,#991b1b); }
 
-    /* Rain probability color bands */
-    .rain-low    { background: linear-gradient(145deg, #14532d, #166534); }
-    .rain-medium { background: linear-gradient(145deg, #713f12, #78350f); }
-    .rain-high   { background: linear-gradient(145deg, #7f1d1d, #991b1b); }
-    .rain-none   { background: linear-gradient(145deg, #1e3a5f, #1e40af22); }
-
-    /* ── Rain layer ── */
+    /* ── Rain layer (inside card) ── */
     .rain-layer {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: var(--rain-opacity, 0.25);
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      opacity: var(--rain-opacity, .22);
       background-image:
         repeating-linear-gradient(105deg,
-          transparent 0, transparent calc(var(--rain-gap, 6px) - 1px),
-          rgba(186,212,255,0.55) calc(var(--rain-gap, 6px) - 1px), rgba(186,212,255,0.55) var(--rain-gap, 6px)),
+          transparent 0, transparent calc(var(--rain-gap,6px) - 1px),
+          rgba(186,212,255,.55) calc(var(--rain-gap,6px) - 1px), rgba(186,212,255,.55) var(--rain-gap,6px)),
         repeating-linear-gradient(102deg,
-          transparent 0, transparent calc(var(--rain-gap, 6px) * 1.7),
-          rgba(160,190,235,0.35) calc(var(--rain-gap, 6px) * 1.7), rgba(160,190,235,0.35) calc(calc(var(--rain-gap, 6px) * 1.7) + 1px));
+          transparent 0, transparent calc(var(--rain-gap,6px) * 1.7),
+          rgba(160,190,235,.35) calc(var(--rain-gap,6px) * 1.7), rgba(160,190,235,.35) calc(calc(var(--rain-gap,6px) * 1.7) + 1px));
       background-size: 100% 220px, 100% 340px;
       animation:
-        rain-fall var(--rain-speed, 0.7s) linear infinite,
-        rain-fall-back calc(var(--rain-speed, 0.7s) * 1.6) linear infinite;
-      transition: opacity 0.28s ease;
+        rain-fall var(--rain-speed,.7s) linear infinite,
+        rain-fall-back calc(var(--rain-speed,.7s) * 1.6) linear infinite;
+      transition: opacity .28s ease;
     }
+    @keyframes rain-fall      { from{background-position:0 0,0 0;} to{background-position:-60px 220px,0 0;} }
+    @keyframes rain-fall-back { from{background-position:0 0,0 0;} to{background-position:0 0,-30px 340px;} }
 
-    @keyframes rain-fall {
-      from { background-position: 0 0,        0 0; }
-      to   { background-position: -60px 220px, 0 0; }
-    }
+    /* all card content above rain layer */
+    .card > * { position: relative; z-index: 1; }
 
-    @keyframes rain-fall-back {
-      from { background-position: 0 0, 0 0; }
-      to   { background-position: 0 0, -30px 340px; }
-    }
+    /* ── Card header row ── */
+    .card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+    .card-date   { font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:rgba(255,255,255,.5); font-weight:600; }
+    .card-dow    { font-size:1.05rem; font-weight:700; color:#f8fafc; margin-top:1px; }
 
-    /* ── Card content (above rain layer) ── */
-    .card-date, .card-dow, .card-icon, .card-condition,
-    .card-temps, .card-stats { position: relative; z-index: 1; }
-
-    .card-date {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.55);
-      font-weight: 600;
-    }
-
-    .card-dow {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #f8fafc;
-    }
-
-    /* ── Weather icon ── */
-    .card-icon {
-      font-size: 2.4rem;
-      line-height: 1;
-      position: relative;
-      display: inline-block;
-      width: max-content;
-    }
-
+    /* ── Icon + condition ── */
+    .card-icon { font-size:2.4rem; line-height:1; display:inline-block; position:relative; }
     .icon-glyph {
-      display: inline-block;
-      transform-origin: 50% 70%;
+      display:inline-block; transform-origin:50% 70%;
       animation: icon-sway 4.2s ease-in-out infinite, icon-jolt 7s ease-in-out infinite;
-      animation-delay: calc(var(--i) * -0.9s), calc(var(--i) * -0.9s);
+      animation-delay: calc(var(--i)*-.9s), calc(var(--i)*-.9s);
     }
-
     .card-icon::after {
-      content: "";
-      position: absolute;
-      inset: -8px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(125,211,252,0.45), transparent 60%);
-      opacity: 0;
-      z-index: -1;
-      animation: icon-glow 7s ease-in-out infinite;
-      animation-delay: calc(var(--i) * -0.9s);
+      content:""; position:absolute; inset:-8px; border-radius:50%;
+      background:radial-gradient(circle,rgba(125,211,252,.4),transparent 60%);
+      opacity:0; z-index:-1; animation:icon-glow 7s ease-in-out infinite;
+      animation-delay:calc(var(--i)*-.9s);
     }
-
-    @keyframes icon-sway {
-      0%, 100% { transform: rotate(-3deg) translateY(0); }
-      50%      { transform: rotate(3deg) translateY(-1px); }
-    }
-
+    @keyframes icon-sway { 0%,100%{transform:rotate(-3deg) translateY(0);} 50%{transform:rotate(3deg) translateY(-1px);} }
     @keyframes icon-jolt {
-      0%, 86%, 100% { transform: translateX(0); }
-      88%  { transform: translateX(-2px) rotate(-1deg); }
-      90%  { transform: translateX(2px) rotate(1deg); }
-      92%  { transform: translateX(-1px); }
-      94%  { transform: translateX(0); }
+      0%,86%,100%{transform:translateX(0);}
+      88%{transform:translateX(-2px) rotate(-1deg);}
+      90%{transform:translateX(2px) rotate(1deg);}
+      92%{transform:translateX(-1px);} 94%{transform:translateX(0);}
     }
-
     @keyframes icon-glow {
-      0%, 84%, 100% { opacity: 0; transform: scale(0.9); }
-      89%           { opacity: 1; transform: scale(1.15); }
-      96%           { opacity: 0; transform: scale(0.95); }
+      0%,84%,100%{opacity:0;transform:scale(.9);}
+      89%{opacity:1;transform:scale(1.15);}
+      96%{opacity:0;transform:scale(.95);}
+    }
+    .card-condition { font-size:.82rem; color:rgba(255,255,255,.7); font-weight:500; margin-top:4px; margin-bottom:10px; }
+
+    /* ── Temp row ── */
+    .card-temps { display:flex; align-items:baseline; gap:10px; margin-bottom:4px; }
+    .temp-max   { font-size:1.7rem; font-weight:700; color:#fbbf24; transition:text-shadow .28s; }
+    .temp-min   { font-size:1.1rem; color:#93c5fd; }
+    .feels-like { font-size:.75rem; color:rgba(255,255,255,.45); margin-left:auto; align-self:center; }
+    .feels-warm { color:#fb923c; }
+    .feels-cool { color:#7dd3fc; }
+
+    /* ── Temp range bar (Apple signature) ── */
+    .range-bar-wrap { margin-bottom:14px; }
+    .range-track {
+      height:5px; border-radius:99px;
+      background:rgba(255,255,255,.1);
+      position:relative; overflow:hidden;
+    }
+    .range-fill {
+      position:absolute; top:0; height:100%; border-radius:99px;
+      background:linear-gradient(90deg,#38bdf8,#fbbf24,#f87171);
     }
 
-    .card-condition {
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.75);
-      font-weight: 500;
+    /* ── Divider ── */
+    .card-divider { height:1px; background:rgba(255,255,255,.07); margin:10px 0; }
+
+    /* ── Tiles grid ── */
+    .tiles { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+    .tile {
+      background:rgba(0,0,0,.15);
+      border-radius:12px; padding:9px 10px;
+      display:flex; flex-direction:column; gap:3px;
     }
-
-    .card-temps {
-      display: flex;
-      gap: 12px;
-      align-items: baseline;
+    .tile-label {
+      font-size:.6rem; text-transform:uppercase; letter-spacing:.07em;
+      color:rgba(255,255,255,.38); font-weight:600; display:flex; align-items:center; gap:4px;
     }
+    .tile-label .ti { font-size:.75rem; }
+    .tile-value { font-size:.92rem; font-weight:600; color:#e2e8f0; }
+    .tile-sub   { font-size:.68rem; color:rgba(255,255,255,.42); margin-top:1px; }
 
-    .temp-max { font-size: 1.6rem; font-weight: 700; color: #fbbf24; }
-    .temp-min { font-size: 1.1rem; color: #93c5fd; }
+    /* tile-specific colours */
+    .rain-pct  { color:#7dd3fc; }
+    .uv-low    { color:#86efac; }
+    .uv-mod    { color:#fde047; }
+    .uv-high   { color:#fb923c; }
+    .uv-vhigh  { color:#f87171; }
+    .uv-ext    { color:#e879f9; }
+    .muggy     { color:#fb923c; }
 
-    /* ── Stats grid ── */
-    .card-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px 10px;
-      margin-top: 4px;
-    }
+    /* ── UV mini-bar ── */
+    .uv-bar-wrap  { margin-top:4px; height:4px; border-radius:99px; overflow:hidden; background:rgba(255,255,255,.1); }
+    .uv-bar-fill  { height:100%; border-radius:99px; background:linear-gradient(90deg,#86efac,#fde047,#fb923c,#f87171,#e879f9); }
 
-    .stat { display: flex; flex-direction: column; gap: 1px; }
+    /* ── Precip bar ── */
+    .precip-bar-wrap { margin-top:4px; height:4px; border-radius:99px; overflow:hidden; background:rgba(255,255,255,.1); }
+    .precip-bar-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#38bdf8,#1d4ed8); }
 
-    .stat-label {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: rgba(255,255,255,0.4);
-    }
-
-    .stat-value { font-size: 0.9rem; font-weight: 600; color: #e2e8f0; }
-
-    .rain-pct  { color: #7dd3fc; }
-    .uv-low    { color: #86efac; }
-    .uv-mod    { color: #fde047; }
-    .uv-high   { color: #fb923c; }
-    .uv-vhigh  { color: #f87171; }
-    .uv-ext    { color: #e879f9; }
+    /* ── Sunrise/Sunset arc ── */
+    .sun-tile { grid-column:1/-1; }
+    .sun-arc-wrap { margin-top:6px; }
+    .sun-arc-wrap svg { width:100%; height:auto; }
+    .sun-times { display:flex; justify-content:space-between; font-size:.72rem; color:rgba(255,255,255,.5); margin-top:3px; }
 
     /* ── Wind dial ── */
-    .wind-dial { display: flex; align-items: center; gap: 5px; }
-
+    .wind-dial  { display:flex; align-items:center; gap:5px; }
     .wind-arrow {
-      display: inline-block;
-      font-size: 1rem;
-      line-height: 1;
-      color: #7dd3fc;
-      transform: rotate(var(--wind-deg, 45deg));
-      transform-origin: 50% 50%;
-      animation: wind-gust var(--wind-pulse, 1.6s) ease-in-out infinite;
+      display:inline-block; font-size:1rem; color:#7dd3fc;
+      transform:rotate(var(--wind-deg,45deg)); transform-origin:50%;
+      animation:wind-gust var(--wind-pulse,1.6s) ease-in-out infinite;
     }
-
     @keyframes wind-gust {
-      0%, 100% { opacity: 0.65; }
-      50%      { opacity: 1; transform: rotate(var(--wind-deg, 45deg)) translateY(-2px); }
+      0%,100%{opacity:.65;}
+      50%{opacity:1;transform:rotate(var(--wind-deg,45deg)) translateY(-2px);}
     }
 
-    /* ── Misc ── */
-    .no-data {
-      text-align: center;
-      color: #475569;
-      padding: 60px 0;
-      font-size: 1rem;
-    }
+    /* ── Pressure gauge ── */
+    .pressure-gauge { margin-top:5px; }
+    .pressure-gauge svg { width:100%; height:auto; }
+
+    /* ── No data ── */
+    .no-data { grid-column:1/-1; text-align:center; color:#475569; padding:60px 0; font-size:1rem; }
 
     footer {
-      text-align: center;
-      margin-top: 36px;
-      font-size: 0.75rem;
-      color: #334155;
-      position: relative;
-      z-index: 1;
+      text-align:center; margin-top:36px; font-size:.75rem; color:#334155;
+      position:relative; z-index:1;
     }
+    footer a { color:#475569; text-decoration:none; }
+    footer a:hover { color:#64748b; }
 
-    footer a { color: #475569; text-decoration: none; }
-    footer a:hover { color: #64748b; }
-
-    /* ── prefers-reduced-motion ── */
+    /* ── Reduced motion ── */
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-        animation-delay: 0ms !important;
-        transition-duration: 0.001ms !important;
+      *,*::before,*::after {
+        animation-duration:.001ms !important;
+        animation-iteration-count:1 !important;
+        animation-delay:0ms !important;
+        transition-duration:.001ms !important;
       }
-      .card,
-      header h1, header .location, header .updated, .season-badge {
-        opacity: 1 !important;
-        transform: none !important;
+      .card, header h1, header .location, header .updated, .season-badge {
+        opacity:1 !important; transform:none !important;
       }
-      .rain-layer    { opacity: var(--rain-opacity, 0.22) !important; }
-      body::after    { opacity: 0 !important; }
-      #rain-canvas   { display: none !important; }
-      .icon-glyph    { transform: none !important; }
-      .card-icon::after { opacity: 0 !important; }
-      .wind-arrow    { transform: rotate(var(--wind-deg, 45deg)) !important; opacity: 1 !important; }
+      .rain-layer  { opacity:var(--rain-opacity,.22) !important; }
+      body::after  { opacity:0 !important; }
+      .icon-glyph  { transform:none !important; }
+      .card-icon::after { opacity:0 !important; }
+      .wind-arrow  { transform:rotate(var(--wind-deg,45deg)) !important; opacity:1 !important; }
+      #rain-canvas { display:none !important; }
     }
   </style>
 </head>
@@ -386,11 +302,11 @@
 <header>
   <h1>🌧️ Iloilo Weather Forecast</h1>
   <p class="location" id="location">—</p>
-  <p class="updated" id="updated">Loading…</p>
+  <p class="updated"  id="updated">Loading…</p>
   <span class="season-badge">☁️ Habagat Season</span>
 </header>
 
-<div class="grid" id="grid">
+<div class="cards-wrap" id="grid">
   <div class="no-data">Loading forecast data…</div>
 </div>
 
@@ -400,188 +316,288 @@
 
 <script>
 /* ── Full-screen rain engine ── */
-(function() {
+(function(){
   const canvas = document.getElementById('rain-canvas');
-  const ctx = canvas.getContext('2d');
-  let drops = [];
-  let animId = null;
-  let running = false;
+  const ctx    = canvas.getContext('2d');
+  let drops=[], animId=null, running=false;
+  const ANG = 105*Math.PI/180, DX=Math.cos(ANG), DY=Math.sin(ANG);
 
-  const ANGLE = 105 * Math.PI / 180;   // habagat slant
-  const DX = Math.cos(ANGLE);
-  const DY = Math.sin(ANGLE);
+  function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
+  window.addEventListener('resize',resize); resize();
 
-  function resize() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  function makeDrop(intensity) {
-    const speed  = 8 + intensity * 12 + Math.random() * 6;   // 8–26 px/frame
-    const len    = 14 + intensity * 20 + Math.random() * 10; // 14–44 px
-    const alpha  = 0.15 + intensity * 0.35 + Math.random() * 0.15;
+  function makeDrop(intensity){
     return {
-      x: Math.random() * (canvas.width + 200) - 100,
-      y: Math.random() * canvas.height,
-      speed, len, alpha,
+      x: Math.random()*(canvas.width+200)-100,
+      y: Math.random()*canvas.height,
+      speed: 8+intensity*12+Math.random()*6,
+      len:   14+intensity*20+Math.random()*10,
+      alpha: 0.15+intensity*0.35+Math.random()*0.15,
     };
   }
-
-  function spawnDrops(intensity) {
-    // 60 drops at 0% intensity → 260 at 100%
-    const count = Math.round(60 + intensity * 200);
-    drops = Array.from({ length: count }, () => makeDrop(intensity));
+  function spawnDrops(intensity){
+    drops = Array.from({length:Math.round(60+intensity*200)},()=>makeDrop(intensity));
   }
-
-  function tick(intensity) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drops.forEach(d => {
-      d.x += DX * d.speed;
-      d.y += DY * d.speed;
-      // wrap: if drop exits bottom or right, re-enter from top/left edge
-      if (d.y > canvas.height + 50) { d.y = -d.len; d.x = Math.random() * canvas.width; }
-      if (d.x > canvas.width  + 50) { d.x = -d.len; d.y = Math.random() * canvas.height; }
-
-      ctx.save();
-      ctx.strokeStyle = `rgba(186,212,255,${d.alpha})`;
-      ctx.lineWidth = 1;
+  function tick(intensity){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    drops.forEach(d=>{
+      d.x+=DX*d.speed; d.y+=DY*d.speed;
+      if(d.y>canvas.height+50){d.y=-d.len;d.x=Math.random()*canvas.width;}
+      if(d.x>canvas.width+50) {d.x=-d.len; d.y=Math.random()*canvas.height;}
+      ctx.strokeStyle=`rgba(186,212,255,${d.alpha})`;
+      ctx.lineWidth=1;
       ctx.beginPath();
-      ctx.moveTo(d.x, d.y);
-      ctx.lineTo(d.x + DX * d.len, d.y + DY * d.len);
+      ctx.moveTo(d.x,d.y);
+      ctx.lineTo(d.x+DX*d.len,d.y+DY*d.len);
       ctx.stroke();
-      ctx.restore();
     });
-    animId = requestAnimationFrame(() => tick(intensity));
+    animId=requestAnimationFrame(()=>tick(intensity));
   }
-
-  // Called from forecast fetch with average rain_chance (0–100)
-  window.startRain = function(avgRainChance) {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (avgRainChance < 10) return; // not rainy, skip
-    const intensity = Math.max(0, Math.min(1, (avgRainChance - 10) / 90));
-    if (running) { cancelAnimationFrame(animId); }
-    spawnDrops(intensity);
-    running = true;
-    tick(intensity);
+  window.startRain=function(avg){
+    if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    if(avg<10) return;
+    const intensity=Math.max(0,Math.min(1,(avg-10)/90));
+    if(running) cancelAnimationFrame(animId);
+    spawnDrops(intensity); running=true; tick(intensity);
     canvas.classList.add('visible');
   };
 })();
 
-const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+/* ── Helpers ── */
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DIRS={N:0,NNE:22.5,NE:45,ENE:67.5,E:90,ESE:112.5,SE:135,SSE:157.5,
+             S:180,SSW:202.5,SW:225,WSW:247.5,W:270,WNW:292.5,NW:315,NNW:337.5};
 
-const DIRS = {
-  N:0, NNE:22.5, NE:45, ENE:67.5, E:90, ESE:112.5, SE:135, SSE:157.5,
-  S:180, SSW:202.5, SW:225, WSW:247.5, W:270, WNW:292.5, NW:315, NNW:337.5
-};
-
-function rainClass(pct) {
-  if (pct == null) return 'rain-none';
-  if (pct >= 70) return 'rain-high';
-  if (pct >= 40) return 'rain-medium';
-  if (pct >= 10) return 'rain-low';
+function rainClass(p){
+  if(p==null) return 'rain-none';
+  if(p>=70) return 'rain-high';
+  if(p>=40) return 'rain-medium';
+  if(p>=10) return 'rain-low';
   return 'rain-none';
 }
+function uvClass(l){
+  return{Low:'uv-low',Moderate:'uv-mod',High:'uv-high','Very High':'uv-vhigh',Extreme:'uv-ext'}[l]||'';
+}
+function f(v,sfx,fb='—'){ return v!=null?`${v}${sfx}`:fb; }
+function r1(v){ return v!=null?Math.round(v*10)/10:null; }
 
-function uvClass(label) {
-  return { Low:'uv-low', Moderate:'uv-mod', High:'uv-high', 'Very High':'uv-vhigh', Extreme:'uv-ext' }[label] || '';
+/* SVG arc for sunrise/sunset */
+function sunArc(rise, set, svgW=200){
+  // parameterize arc: 0=sunrise,1=sunset on a semicircle
+  // We don't know current time per-day, so show the full arc with tick marks
+  const cx=svgW/2, cy=svgW*0.52, rx=svgW*0.44, ry=svgW*0.32;
+  // arc from left to right (sunrise left, sunset right)
+  const path=`M ${cx-rx},${cy} A ${rx},${ry} 0 0 1 ${cx+rx},${cy}`;
+  return `
+  <svg viewBox="0 0 ${svgW} ${svgW*0.55}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="arcGrad" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%"   stop-color="#f97316" stop-opacity=".7"/>
+        <stop offset="50%"  stop-color="#fde047" stop-opacity=".9"/>
+        <stop offset="100%" stop-color="#f97316" stop-opacity=".6"/>
+      </linearGradient>
+    </defs>
+    <!-- track -->
+    <path d="${path}" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="3" stroke-linecap="round"/>
+    <!-- glow arc -->
+    <path d="${path}" fill="none" stroke="url(#arcGrad)" stroke-width="3" stroke-linecap="round"/>
+    <!-- sunrise dot -->
+    <circle cx="${cx-rx}" cy="${cy}" r="4" fill="#f97316"/>
+    <!-- sunset dot -->
+    <circle cx="${cx+rx}" cy="${cy}" r="4" fill="#f97316" opacity=".7"/>
+  </svg>`;
 }
 
-function fmt(val, suffix, fallback='—') {
-  return (val != null) ? `${val}${suffix}` : fallback;
+/* Pressure gauge SVG */
+function pressureGauge(hpa){
+  if(hpa==null) return '';
+  // map 980–1040 hPa → -90° to +90° (half-circle needle)
+  const clamped = Math.max(980, Math.min(1040, hpa));
+  const pct = (clamped-980)/60;               // 0–1
+  const angle = -90 + pct*180;                // -90° (low) to +90° (high)
+  const rad = angle*Math.PI/180;
+  const cx=50,cy=50,r=36;
+  const nx = cx + r*Math.cos(rad);
+  const ny = cy + r*Math.sin(rad);
+  const arcPath = `M ${cx-r},${cy} A ${r},${r} 0 0 1 ${cx+r},${cy}`;
+  return `
+  <svg viewBox="0 0 100 55" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:90px">
+    <path d="${arcPath}" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="5" stroke-linecap="round"/>
+    <path d="${arcPath}" fill="none" stroke="url(#presGrad)" stroke-width="5" stroke-linecap="round"/>
+    <defs>
+      <linearGradient id="presGrad" x1="0" x2="1">
+        <stop offset="0%"   stop-color="#38bdf8"/>
+        <stop offset="100%" stop-color="#f87171"/>
+      </linearGradient>
+    </defs>
+    <line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}"
+          stroke="#f8fafc" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="3" fill="#f8fafc"/>
+    <text x="10"  y="52" font-size="7" fill="rgba(255,255,255,.35)" font-family="sans-serif">Low</text>
+    <text x="72"  y="52" font-size="7" fill="rgba(255,255,255,.35)" font-family="sans-serif">High</text>
+  </svg>`;
 }
 
-fetch('forecast.json?_=' + Date.now())
-  .then(r => r.json())
-  .then(data => {
-    document.getElementById('location').textContent = data.location || '';
-    document.getElementById('updated').textContent = data.generated
-      ? `Last updated: ${data.generated}` : '';
+/* ── Main render ── */
+fetch('forecast.json?_='+Date.now())
+  .then(r=>r.json())
+  .then(data=>{
+    document.getElementById('location').textContent = data.location||'';
+    document.getElementById('updated').textContent  = data.generated?`Last updated: ${data.generated}`:'';
 
-    // Start full-screen rain if forecast is rainy
-    if (data.days && data.days.length) {
-      const avgRain = data.days.reduce((s, d) => s + (d.rain_chance || 0), 0) / data.days.length;
-      window.startRain(avgRain);
+    if(data.days&&data.days.length){
+      const avg = data.days.reduce((s,d)=>s+(d.rain_chance||0),0)/data.days.length;
+      window.startRain(avg);
     }
 
     const grid = document.getElementById('grid');
-
-    if (!data.days || data.days.length === 0) {
-      grid.innerHTML = '<div class="no-data">No forecast data available yet. Check back after 06:00 PHT.</div>';
-      return;
+    if(!data.days||!data.days.length){
+      grid.innerHTML='<div class="no-data">No forecast data yet. Check after 06:00 PHT.</div>'; return;
     }
 
-    grid.innerHTML = '';
+    const weekMax = Math.max(...data.days.map(d=>d.temp_max||0));
+    const weekMin = Math.min(...data.days.map(d=>d.temp_min??99));
 
-    data.days.forEach((d, i) => {
-      const date = new Date(d.date + 'T00:00:00+08:00');
-      const dow = DAYS[date.getDay()];
-      const dateLabel = date.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' });
-      const uvc = uvClass(d.uv_label);
+    grid.innerHTML='';
+    data.days.forEach((d,i)=>{
+      const date     = new Date(d.date+'T00:00:00+08:00');
+      const dow      = DAYS[date.getDay()];
+      const dateLbl  = date.toLocaleDateString('en-PH',{month:'short',day:'numeric'});
+      const uvc      = uvClass(d.uv_label);
 
-      // Data-driven rain animation params (map 93–100 window)
-      const intensity = Math.max(0, Math.min(1, ((d.rain_chance || 0) - 93) / 7));
-      const rainOpacity = (0.16 + intensity * 0.22).toFixed(3);
-      const rainSpeed   = (0.85 - intensity * 0.35).toFixed(3);
-      const rainGap     = (7 - intensity * 3).toFixed(1);
+      /* rain animation params */
+      const intensity   = Math.max(0,Math.min(1,((d.rain_chance||0)-93)/7));
+      const rainOpacity = (0.16+intensity*0.22).toFixed(3);
+      const rainSpeed   = (0.85-intensity*0.35).toFixed(3);
+      const rainGap     = (7-intensity*3).toFixed(1);
 
-      // Wind dial
-      const towardDeg = ((DIRS[d.wind_dir] || 0) + 180) % 360;
-      const windPulse = Math.max(0.9, 2.4 - ((d.wind_speed || 0) / 40) * 1.5).toFixed(2);
+      /* wind */
+      const towardDeg = ((DIRS[d.wind_dir]||0)+180)%360;
+      const windPulse = Math.max(0.9,2.4-((d.wind_speed||0)/40)*1.5).toFixed(2);
+
+      /* feels-like delta */
+      const feelsDiff = d.feels_max!=null&&d.temp_max!=null ? d.feels_max-d.temp_max : 0;
+      const feelsClass = feelsDiff>=3?'feels-warm':feelsDiff<=-3?'feels-cool':'';
+
+      /* temp range bar */
+      const rangeSpan  = weekMax-weekMin||1;
+      const barLeft    = ((d.temp_min-weekMin)/rangeSpan*100).toFixed(1);
+      const barWidth   = (((d.temp_max-d.temp_min)/rangeSpan)*100).toFixed(1);
+
+      /* UV bar width */
+      const uvPct = Math.min(100,((d.uv_index||0)/12)*100).toFixed(1);
+
+      /* precip bar (0–25mm scale) */
+      const precipPct = d.precip_mm!=null ? Math.min(100,(d.precip_mm/25)*100).toFixed(1) : 0;
 
       const card = document.createElement('div');
       card.className = `card ${rainClass(d.rain_chance)}`;
-      card.style.setProperty('--i', i);
+      card.style.setProperty('--i',         i);
       card.style.setProperty('--rain-opacity', rainOpacity);
-      card.style.setProperty('--rain-speed', rainSpeed + 's');
-      card.style.setProperty('--rain-gap', rainGap + 'px');
-      card.style.setProperty('--wind-deg', towardDeg + 'deg');
-      card.style.setProperty('--wind-pulse', windPulse + 's');
+      card.style.setProperty('--rain-speed',   rainSpeed+'s');
+      card.style.setProperty('--rain-gap',     rainGap+'px');
+      card.style.setProperty('--wind-deg',     towardDeg+'deg');
+      card.style.setProperty('--wind-pulse',   windPulse+'s');
 
       card.innerHTML = `
         <div aria-hidden="true" class="rain-layer"></div>
-        <div>
-          <div class="card-date">${dateLabel}</div>
-          <div class="card-dow">${dow}</div>
+
+        <!-- Header -->
+        <div class="card-header">
+          <div>
+            <div class="card-date">${dateLbl}</div>
+            <div class="card-dow">${dow}</div>
+          </div>
+          <div class="card-icon"><span class="icon-glyph">${d.icon||'❓'}</span></div>
         </div>
-        <div class="card-icon">
-          <span class="icon-glyph">${d.icon || '❓'}</span>
-        </div>
-        <div class="card-condition">${d.condition || '—'}</div>
+
+        <div class="card-condition">${d.condition||'—'}</div>
+
+        <!-- Temps + feels-like -->
         <div class="card-temps">
-          <span class="temp-max">${fmt(d.temp_max, '°')}</span>
-          <span class="temp-min">${fmt(d.temp_min, '°')}</span>
+          <span class="temp-max">${f(d.temp_max,'°')}</span>
+          <span class="temp-min">${f(d.temp_min,'°')}</span>
+          ${d.feels_max!=null?`<span class="feels-like ${feelsClass}" title="Feels like">Feels ${d.feels_max}°</span>`:''}
         </div>
-        <div class="card-stats">
-          <div class="stat">
-            <span class="stat-label">Rain</span>
-            <span class="stat-value rain-pct">${fmt(d.rain_chance, '%')}</span>
+
+        <!-- Apple temp range bar -->
+        <div class="range-bar-wrap">
+          <div class="range-track">
+            <div class="range-fill" style="left:${barLeft}%;width:${barWidth}%"></div>
           </div>
-          <div class="stat">
-            <span class="stat-label">Humidity</span>
-            <span class="stat-value">${fmt(d.humidity_max, '%')}</span>
+        </div>
+
+        <div class="card-divider"></div>
+
+        <!-- Tiles grid -->
+        <div class="tiles">
+
+          <!-- Rain / Precip -->
+          <div class="tile">
+            <div class="tile-label"><span class="ti">🌧</span> Rain</div>
+            <div class="tile-value rain-pct">${f(d.rain_chance,'%')}</div>
+            ${d.precip_mm!=null&&d.precip_mm>0?`
+              <div class="tile-sub">${d.precip_mm} mm</div>
+              <div class="precip-bar-wrap"><div class="precip-bar-fill" style="width:${precipPct}%"></div></div>`
+            :''}
           </div>
-          <div class="stat stat-wind">
-            <span class="stat-label">Wind</span>
+
+          <!-- Humidity + dew point -->
+          <div class="tile">
+            <div class="tile-label"><span class="ti">💧</span> Humidity</div>
+            <div class="tile-value">${f(d.humidity_max,'%')}</div>
+            ${d.dew_point!=null?`<div class="tile-sub ${d.dew_point>=20?'muggy':''}">Dew ${d.dew_point}°${d.dew_point>=20?' · Muggy':''}</div>`:''}
+          </div>
+
+          <!-- Wind + gusts -->
+          <div class="tile">
+            <div class="tile-label"><span class="ti">💨</span> Wind</div>
             <div class="wind-dial">
               <span class="wind-arrow" aria-hidden="true">↑</span>
-              <span class="stat-value">${fmt(d.wind_speed, ' km/h')} ${d.wind_dir || ''}</span>
+              <span class="tile-value">${f(d.wind_speed,' km/h')} ${d.wind_dir||''}</span>
+            </div>
+            ${d.wind_gusts!=null?`<div class="tile-sub">Gusts ${d.wind_gusts} km/h</div>`:''}
+          </div>
+
+          <!-- UV -->
+          <div class="tile">
+            <div class="tile-label"><span class="ti">☀️</span> UV Index</div>
+            <div class="tile-value ${uvc}">${f(d.uv_index,'')} <small style="font-weight:400;font-size:.75em">${d.uv_label||''}</small></div>
+            <div class="uv-bar-wrap"><div class="uv-bar-fill" style="width:${uvPct}%"></div></div>
+          </div>
+
+          <!-- Visibility -->
+          <div class="tile">
+            <div class="tile-label"><span class="ti">👁</span> Visibility</div>
+            <div class="tile-value">${d.visibility_km!=null?d.visibility_km+' km':'—'}</div>
+            ${d.visibility_label?`<div class="tile-sub">${d.visibility_label}</div>`:''}
+          </div>
+
+          <!-- Pressure -->
+          <div class="tile">
+            <div class="tile-label"><span class="ti">🌡</span> Pressure</div>
+            <div class="tile-value">${f(d.pressure_hpa,' hPa')}</div>
+            <div class="pressure-gauge">${pressureGauge(d.pressure_hpa)}</div>
+          </div>
+
+          <!-- Sunrise / Sunset (full-width) -->
+          <div class="tile sun-tile">
+            <div class="tile-label"><span class="ti">🌅</span> Sunrise / Sunset</div>
+            <div class="sun-arc-wrap">${sunArc(d.sunrise,d.sunset)}</div>
+            <div class="sun-times">
+              <span>↑ ${d.sunrise||'—'}</span>
+              <span>${d.sunset||'—'} ↓</span>
             </div>
           </div>
-          <div class="stat">
-            <span class="stat-label">UV</span>
-            <span class="stat-value ${uvc}">${fmt(d.uv_index, '')} <small>${d.uv_label || ''}</small></span>
-          </div>
-        </div>`;
+
+        </div><!-- /tiles -->
+      `;
 
       grid.appendChild(card);
     });
   })
-  .catch(() => {
-    document.getElementById('grid').innerHTML =
-      '<div class="no-data">Could not load forecast.json — workflow may not have run yet.</div>';
-    document.getElementById('updated').textContent = '';
+  .catch(()=>{
+    document.getElementById('grid').innerHTML='<div class="no-data">Could not load forecast.json.</div>';
+    document.getElementById('updated').textContent='';
   });
 </script>
 </body>
