@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-17 08:16 PHT",
+  "generated": "2026-09-18 08:02 PHT",
   "location": "Savannah Crest A, Abilay Norte, Oton, Iloilo",
   "days": [
     {
@@ -137,7 +137,7 @@
       "feels_min": 26.5,
       "week_max": 29.4,
       "week_min": 24.0,
-      "rain_chance": 100,
+      "rain_chance": 97,
       "precip_mm": 16.2,
       "wind_speed": 29.7,
       "wind_dir": "SSW",
